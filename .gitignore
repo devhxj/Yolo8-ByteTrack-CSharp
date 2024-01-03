@@ -1,0 +1,14 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/packages
+/x64/Debug
+/.vs
+/ByteTrack/x64/Debug
+/Enjoy.ByteTrack/bin/Debug/net8.0
+/Enjoy.ByteTrack/obj
+/Enjoy.Test/bin/Debug/net8.0
+/Enjoy.Test/obj
+/Enjoy.Yolov8/bin/Debug/net8.0-windows
+/Enjoy.Yolov8/obj
