@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NumpyDotNet" Version="0.9.86.1" />
+    <PackageReference Include="OpenCvSharp4" Version="4.8.0.20230708" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Enjoy.Algorithm\Enjoy.Algorithm.csproj" />
   </ItemGroup>
 

@@ -1,15 +1,14 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
 namespace Enjoy.Algorithm;
 
-public sealed class KalmanFilter
+public class KalmanFilter
 {
-    static readonly MatrixBuilder<float> M = Matrix<float>.Build;
-    static readonly VectorBuilder<float> V = Vector<float>.Build;
-
-    readonly float _stdWeightPosition;
-    readonly float _stdWeightVelocity;
-    readonly Matrix<float> _f8x8MotionMat;
-    readonly Matrix<float> _f4x8UpdateMat;
+    protected static readonly MatrixBuilder<float> M = Matrix<float>.Build;
+    protected static readonly VectorBuilder<float> V = Vector<float>.Build;
+    protected readonly float _stdWeightPosition;
+    protected readonly float _stdWeightVelocity;
+    protected readonly Matrix<float> _f8x8MotionMat;
+    protected readonly Matrix<float> _f4x8UpdateMat;
 
     /// <summary>
     /// 
@@ -17,7 +16,7 @@ public sealed class KalmanFilter
     /// <param name="stdWeightPosition"></param>
     /// <param name="stdWeightVelocity"></param>
     public KalmanFilter(float stdWeightPosition = 1.0f / 20, float stdWeightVelocity = 1.0f / 160)
-    {   
+    {
         _stdWeightPosition = stdWeightPosition;
         _stdWeightVelocity = stdWeightVelocity;
         int ndim = 4;
@@ -31,12 +30,12 @@ public sealed class KalmanFilter
     }
 
     /// <summary>
-    /// 
+    /// Create track from unassociated measurement
     /// </summary>
-    /// <param name="f1x8Mean"></param>
-    /// <param name="f8x8Covariance"></param>
-    /// <param name="measurement"></param>
-    public void Initiate(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, float[] measurement)
+    /// <param name="f1x8Mean">the mean matrix(1x8 dimensional) of the new track.</param>
+    /// <param name="f8x8Covariance">the covariance matrix(8x8 dimensional) of the new track.</param>
+    /// <param name="measurement">Bounding box coordinates(x, y, a, h) with center position(x, y), aspect ratio a, and height h.</param>
+    public virtual void Initiate(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, float[] measurement)
     {
         var m = measurement[3];
         f1x8Mean.SetSubMatrix(0, 1, 0, 4, M.Dense(1, 4, measurement));
@@ -55,11 +54,11 @@ public sealed class KalmanFilter
     }
 
     /// <summary>
-    /// 
+    /// Run Kalman filter prediction step.
     /// </summary>
-    /// <param name="f1x8Mean"></param>
-    /// <param name="f8x8Covariance"></param>
-    public void Predict(ref Matrix<float> f1x8Mean,ref Matrix<float> f8x8Covariance)
+    /// <param name="f1x8Mean">the mean matrix(1x8 dimensional) of the new track.</param>
+    /// <param name="f8x8Covariance">the covariance matrix(8x8 dimensional) of the new track.</param>
+    public virtual void Predict(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance)
     {
         var m = f1x8Mean[0, 3];
         var std = V.Dense([
@@ -79,12 +78,12 @@ public sealed class KalmanFilter
     }
 
     /// <summary>
-    /// 
+    /// Run Kalman filter correction step.
     /// </summary>
-    /// <param name="f1x8Mean"></param>
-    /// <param name="f8x8Covariance"></param>
-    /// <param name="measurement"></param>
-    public void Update(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, float[] measurement)
+    /// <param name="f1x8Mean">The predicted state's mean matrix (1x8 dimensional).</param>
+    /// <param name="f8x8Covariance">The state's covariance matrix (8x8 dimensional).</param>
+    /// <param name="measurement">The 4 dimensional measurement vector(x, y, a, h), where(x, y) is the center position, a the aspect ratio, and h the height of the bounding box.</param>
+    public virtual void Update(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, float[] measurement)
     {
         Project(ref f1x8Mean, ref f8x8Covariance, out var f1x4ProjectedMean, out var f4x4ProjectedCov);
 
@@ -98,13 +97,13 @@ public sealed class KalmanFilter
     }
 
     /// <summary>
-    /// 
+    /// Project state distribution to measurement space.
     /// </summary>
-    /// <param name="f1x8Mean"></param>
-    /// <param name="f8x8Covariance"></param>
-    /// <param name="f1x4ProjectedMean"></param>
-    /// <param name="f4x4ProjectedCov"></param>
-    void Project(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, out Matrix<float> f1x4ProjectedMean, out Matrix<float> f4x4ProjectedCov)
+    /// <param name="f1x8Mean">The state's mean matrix (1x8 dimensional).</param>
+    /// <param name="f8x8Covariance">The state's covariance matrix (8x8 dimensional).</param>
+    /// <param name="f1x4ProjectedMean">Returns the projected mean matrix of the given state estimate.</param>
+    /// <param name="f4x4ProjectedCov">Returns the projected covariance matrix of the given state estimate.</param>
+    protected virtual void Project(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, out Matrix<float> f1x4ProjectedMean, out Matrix<float> f4x4ProjectedCov)
     {
         var m = f1x8Mean[0, 3];
         var std = V.Dense([
