@@ -1,9 +1,9 @@
-﻿namespace Enjoy.ByteTrack;
+﻿namespace Enjoy.Algorithm;
 
 /// <summary>
 /// lapjv算法，线性任务分配
 /// </summary>
-public sealed class Lapjv
+public static class Lapjv
 {
     /// <summary>
     /// 分配
@@ -18,10 +18,7 @@ public sealed class Lapjv
         var cols = cost.GetLength(1);
         var n = rows;
 
-        if (extendCost)
-        {
-            n = rows + cols;
-        }
+        if (extendCost) n = rows + cols;
 
         cost = ExtendCostMatrix(cost, extendCost, costLimit);
         LapjvInternal(n, cost, out int[] x, out int[] y);
@@ -52,26 +49,17 @@ public sealed class Lapjv
             var extendedCost = new float[n, n];
             var defaultValue = costLimit < float.PositiveInfinity ? costLimit / 2.0f : MaxValue(cost) + 1;
             for (var i = 0; i < n; i++)
-            {
                 for (var j = 0; j < n; j++)
-                {
                     extendedCost[i, j] = defaultValue;
-                }
-            }
+                
             for (var i = nRows; i < n; i++)
-            {
                 for (var j = nCols; j < n; j++)
-                {
                     extendedCost[i, j] = 0;
-                }
-            }
+                
             for (var i = 0; i < nRows; i++)
-            {
                 for (var j = 0; j < nCols; j++)
-                {
                     extendedCost[i, j] = cost[i, j];
-                }
-            }
+                
             return extendedCost;
         }
         return cost;
@@ -107,15 +95,10 @@ public sealed class Lapjv
     {
         var maxVal = float.MinValue;
         for (var i = 0; i < matrix.GetLength(0); i++)
-        {
             for (var j = 0; j < matrix.GetLength(1); j++)
-            {
                 if (matrix[i, j] > maxVal)
-                {
                     maxVal = matrix[i, j];
-                }
-            }
-        }
+
         return maxVal;
     }
 

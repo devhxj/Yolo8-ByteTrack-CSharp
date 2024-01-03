@@ -4,11 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Enjoy.Algorithm\Enjoy.Algorithm.csproj" />
+    <PackageReference Include="MathNet.Numerics" Version="6.0.0-beta1" />
   </ItemGroup>
 
 </Project>

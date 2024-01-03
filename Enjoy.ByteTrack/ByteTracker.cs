@@ -1,4 +1,6 @@
-﻿namespace Enjoy.ByteTrack;
+﻿using Enjoy.Algorithm;
+
+namespace Enjoy.ByteTrack;
 
 /// <summary>
 /// 

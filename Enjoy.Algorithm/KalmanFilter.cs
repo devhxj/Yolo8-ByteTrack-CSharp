@@ -1,5 +1,5 @@
 ﻿using MathNet.Numerics.LinearAlgebra;
-namespace Enjoy.ByteTrack;
+namespace Enjoy.Algorithm;
 
 public sealed class KalmanFilter
 {
@@ -17,8 +17,7 @@ public sealed class KalmanFilter
     /// <param name="stdWeightPosition"></param>
     /// <param name="stdWeightVelocity"></param>
     public KalmanFilter(float stdWeightPosition = 1.0f / 20, float stdWeightVelocity = 1.0f / 160)
-    {
-        
+    {   
         _stdWeightPosition = stdWeightPosition;
         _stdWeightVelocity = stdWeightVelocity;
         int ndim = 4;
@@ -39,19 +38,20 @@ public sealed class KalmanFilter
     /// <param name="measurement"></param>
     public void Initiate(ref Matrix<float> f1x8Mean, ref Matrix<float> f8x8Covariance, float[] measurement)
     {
+        var m = measurement[3];
         f1x8Mean.SetSubMatrix(0, 1, 0, 4, M.Dense(1, 4, measurement));
         f1x8Mean.SetSubMatrix(0, 1, 4, 4, M.Dense(1, 4, 0));
         var std = V.Dense([
-            2 * _stdWeightPosition * measurement[3],
-            2 * _stdWeightPosition * measurement[3],
+            2 * _stdWeightPosition * m,
+            2 * _stdWeightPosition * m,
             1e-2f,
-            2 * _stdWeightPosition * measurement[3],
-            10 * _stdWeightVelocity * measurement[3],
-            10 * _stdWeightVelocity * measurement[3],
+            2 * _stdWeightPosition * m,
+            10 * _stdWeightVelocity * m,
+            10 * _stdWeightVelocity * m,
             1e-5f,
-            10 * _stdWeightVelocity * measurement[3]
+            10 * _stdWeightVelocity * m
         ]);
-        f8x8Covariance = Matrix<float>.Build.DenseOfDiagonalVector(std.PointwiseMultiply(std));
+        f8x8Covariance = M.DenseOfDiagonalVector(std.PointwiseMultiply(std));
     }
 
     /// <summary>

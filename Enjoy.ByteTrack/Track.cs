@@ -1,5 +1,5 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using System.Diagnostics.CodeAnalysis;
+﻿using Enjoy.Algorithm;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Enjoy.ByteTrack;
 
